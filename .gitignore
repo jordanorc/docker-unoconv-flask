@@ -1,0 +1,10 @@
+*.*~
+*.pyc
+.settings/
+.project
+.pydevproject
+._.*
+.DS_Store
+.metadata/*
+.~lock*
+.coverage
