@@ -1,5 +1,6 @@
 import os
 import subprocess
+import tempfile
 
 from flask import Flask
 from flask import request
@@ -14,17 +15,21 @@ api = Api(app)
 class UnoconvConverter(object):
 
     def convert(self, file, input_format, output_format):
-        unoconv_bin = 'unoconv'
-        command = [unoconv_bin, '--stdin', '--stdout', '-e', 'UseLosslessCompression=false', '-e', 'ReduceImageResolution=false', '--format', output_format]
+        temp_path = tempfile.NamedTemporaryFile(suffix=".%s" % (input_format, ))
+        temp_path.write(file)
 
+        unoconv_bin = 'unoconv'
+        command = [unoconv_bin, '--stdout', '-e', 'UseLosslessCompression=false', '-e', 'ReduceImageResolution=false', '--format', output_format, temp_path.name]
+        print(" ".join(command))
         p = subprocess.Popen(command,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        p.stdin.write(file)
         data, stderrdata = p.communicate()
 
         if stderrdata:
-            raise Exception(stderrdata)
+            raise Exception(str(stderrdata))
+
+        temp_path.close()
 
         return data
 
