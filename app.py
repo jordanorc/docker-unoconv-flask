@@ -17,10 +17,10 @@ class UnoconvConverter(object):
     def convert(self, file, input_format, output_format):
         temp_path = tempfile.NamedTemporaryFile(suffix=".%s" % (input_format, ))
         temp_path.write(file)
+        temp_path.flush()
 
         unoconv_bin = 'unoconv'
         command = [unoconv_bin, '--stdout', '-e', 'UseLosslessCompression=false', '-e', 'ReduceImageResolution=false', '--format', output_format, temp_path.name]
-        print(" ".join(command))
         p = subprocess.Popen(command,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -38,7 +38,7 @@ class UnoconvResource(Resource):
 
     def post(self, output_format):
         file = request.files['file']
-        extension = os.path.splitext(file.filename)[1]
+        extension = os.path.splitext(file.filename)[1][1:]
         converter = UnoconvConverter()
 
         raw_bytes = converter.convert(file.read(), extension, output_format)

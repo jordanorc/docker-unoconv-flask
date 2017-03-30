@@ -12,6 +12,8 @@ RUN apk add --no-cache \
         curl \
         libreoffice-common \
         libreoffice-writer \
+        libreoffice-calc \
+        libreoffice-impress \
         ttf-droid-nonlatin \
         ttf-droid \
         ttf-dejavu \
