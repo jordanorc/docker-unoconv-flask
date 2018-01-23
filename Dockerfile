@@ -5,8 +5,8 @@ ENV LC_ALL=en_US.UTF-8 \
 	LANGUAGE=en_US.UTF-8 \
 	UNO_URL=https://raw.githubusercontent.com/dagwieers/unoconv/master/unoconv
 
-# copy salus files
-COPY . /unoconv
+# copy unconv files
+COPY ./requirements.txt /tmp/requirements.txt
 
 RUN apk add --no-cache \
         --virtual .build-deps \
@@ -25,15 +25,20 @@ RUN apk add --no-cache \
         ttf-dejavu \
         ttf-freefont \
         ttf-liberation \
-    && rm -rf /unoconv/.git \
     && curl -Ls $UNO_URL -o /bin/unoconv \
     && chmod +x /bin/unoconv \
     && ln -s /usr/bin/python3 /usr/bin/python \
-    && cd /unoconv \
-    && pip install -r requirements.txt \
+    && pip install -r /tmp/requirements.txt \
     && apk del curl \
     && rm -rf /var/cache/apk/* \
+    && rm -rf /root/.cache/ \
+    && rm -rf /tmp/requirements.txt \
     && apk del .build-deps
+
+# copy unconv files
+COPY . /unoconv
+
+RUN rm -rf /unoconv/.git
 
 WORKDIR /unoconv
 
