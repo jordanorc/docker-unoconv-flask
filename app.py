@@ -49,5 +49,3 @@ class UnoconvResource(Resource):
 
 api.add_resource(UnoconvResource, '/unoconv/<string:output_format>/')
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0')

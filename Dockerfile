@@ -1,4 +1,4 @@
-FROM python:alpine
+FROM python:3.6.4-alpine3.6
 
 ENV LC_ALL=en_US.UTF-8 \
 	LANG=en_US.UTF-8 \
@@ -9,6 +9,12 @@ ENV LC_ALL=en_US.UTF-8 \
 COPY . /unoconv
 
 RUN apk add --no-cache \
+        --virtual .build-deps \
+        gcc \
+        g++ \
+        linux-headers \
+        libc-dev \
+    && apk add --no-cache \
         curl \
         libreoffice-common \
         libreoffice-writer \
@@ -26,10 +32,11 @@ RUN apk add --no-cache \
     && cd /unoconv \
     && pip install -r requirements.txt \
     && apk del curl \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/cache/apk/* \
+    && apk del .build-deps
 
 WORKDIR /unoconv
 
 EXPOSE 5000
 
-ENTRYPOINT python3 /unoconv/app.py && /bin/unoconv --listener --server=0.0.0.0 --port=2002
+ENTRYPOINT circusd circus.ini
