@@ -1,1 +1,3 @@
 flask-restful
+uwsgi
+circus
